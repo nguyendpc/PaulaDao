@@ -1,7 +1,4 @@
 import streamlit as st
-import pip
-pip.main(["install", "openpyxl"])
-
 
 st.set_page_config(
     page_title="Final Project",
