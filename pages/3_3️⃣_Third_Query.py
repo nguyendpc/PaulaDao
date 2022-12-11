@@ -4,6 +4,7 @@ import numpy as np
 import seaborn as sns
 from datetime import datetime
 import calendar 
+import os
 from urllib.error import URLError
 
 sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
@@ -14,9 +15,9 @@ st.sidebar.header(":three: Third Query")
 list_Month = ['January', 'February', 'March', 'April', 'May','Jun']
 list_MonthN= [i for i in range(1,7)]
 
-DATA_CSV = "BostonCrime2021_7000_sample.xlsx"
+DATA_CSV = os.path.abspath(os.getcwd())+"/BostonCrime2021_7000_sample.xlsx"
 
-
+@st.experimental_memo
 def read_File(sheet="in",nrows=None):
     """
     Function with a default parameter that returns a value

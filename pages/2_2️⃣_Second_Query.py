@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 from urllib.error import URLError
 
 sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
@@ -15,9 +16,9 @@ list_Day = ['Monday', 'Tuesday', 'Wednesday','Thursday','Friday','Saturday','Sun
 Violent_Key  = ['murder', 'manslaughter', 'assault', 'robbery', 'abuse', 'kidnapping', 'threats']
 Drug_Key = ['manufacture', 'distribution', 'sale', 'purchase', 'use', 'possession', 'transportation', 'drug']
 
-DATA_CSV = "../BostonCrime2021_7000_sample.xlsx"
+DATA_CSV = os.path.abspath(os.getcwd())+"/BostonCrime2021_7000_sample.xlsx"
 
-
+@st.experimental_memo
 def read_File(sheet="in",nrows=None):
     """
     Function with a default parameter that returns a value

@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import seaborn as sns
+import os
 from urllib.error import URLError
 
 sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
@@ -9,7 +10,7 @@ st.set_page_config(page_title="Fouth Query", page_icon=":four:")
 st.markdown("# Fouth Query")
 st.sidebar.header(":three: Fouth Query")
 
-DATA_CSV = "../BostonCrime2021_7000_sample.xlsx"
+DATA_CSV = os.path.abspath(os.getcwd())+"/BostonCrime2021_7000_sample.xlsx"
 
 @st.experimental_memo
 def read_File(sheet="in",nrows=None):
