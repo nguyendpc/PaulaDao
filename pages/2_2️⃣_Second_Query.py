@@ -17,7 +17,7 @@ Drug_Key = ['manufacture', 'distribution', 'sale', 'purchase', 'use', 'possessio
 
 DATA_CSV = "../BostonCrime2021_7000_sample.xlsx"
 
-@st.experimental_memo
+
 def read_File(sheet="in",nrows=None):
     """
     Function with a default parameter that returns a value

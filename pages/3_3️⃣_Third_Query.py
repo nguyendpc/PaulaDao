@@ -16,7 +16,7 @@ list_MonthN= [i for i in range(1,7)]
 
 DATA_CSV = "BostonCrime2021_7000_sample.xlsx"
 
-@st.experimental_memo
+
 def read_File(sheet="in",nrows=None):
     """
     Function with a default parameter that returns a value
