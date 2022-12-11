@@ -9,7 +9,7 @@ st.markdown("# First Query")
 st.sidebar.header(":one: First Query")
 
 list_Day = ['Monday', 'Tuesday', 'Wednesday','Thursday','Friday','Saturday','Sunday']
-DATA_CSV = "../BostonCrime2021_7000_sample.xlsx"
+DATA_CSV = "BostonCrime2021_7000_sample.xlsx"
 
 @st.experimental_memo
 def read_File(sheet="in",nrows=None):
