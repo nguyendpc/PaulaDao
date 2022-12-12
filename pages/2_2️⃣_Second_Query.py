@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
+import pydeck as pdk
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import os
 from urllib.error import URLError
 
 sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
@@ -16,7 +16,7 @@ list_Day = ['Monday', 'Tuesday', 'Wednesday','Thursday','Friday','Saturday','Sun
 Violent_Key  = ['murder', 'manslaughter', 'assault', 'robbery', 'abuse', 'kidnapping', 'threats']
 Drug_Key = ['manufacture', 'distribution', 'sale', 'purchase', 'use', 'possession', 'transportation', 'drug']
 
-DATA_CSV = os.path.abspath(os.getcwd())+"/BostonCrime2021_7000_sample.xlsx"
+DATA_CSV = "BostonCrime2021_7000_sample.xlsx"
 
 @st.experimental_memo
 def read_File(sheet="in",nrows=None):
@@ -24,7 +24,7 @@ def read_File(sheet="in",nrows=None):
     Function with a default parameter that returns a value
     """
     # Read the excel sheet to pandas dataframe
-    data = pd.read_excel(DATA_CSV, sheet_name=sheet,usecols=lambda x: 'OCCURRED_ON_DATE' not in x, na_filter = False,nrows= nrows)
+    data = pd.read_excel(DATA_CSV, sheet_name=sheet, na_filter = False,nrows= nrows)
     # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_dict.html
     result = data.to_dict(orient="records") 
     return result
@@ -106,17 +106,20 @@ def main():
             for row in Date_Of_Month:
                 for b in Trend:
                     p = pd.Period(b["OCCURRED_ON_DATE"], freq="H")
-                    d = p.date
+                    d = p.day
                     m = p.month
                     if m == is_Month and d == row:
                         ToTal[row-1] = ToTal[row-1] + 1
                         Shooting[row-1] = Shooting[row-1] + b["SHOOTING"]
             data_plot = pd.DataFrame({
-                    'ToTal': ToTal,
+                    'Offense': ToTal,
                     'Shooting': Shooting,
+                    'No Shooting': np.array(ToTal) - np.array(Shooting),
                     'Day': Day_Of_Month,
                     })
-            # sns.scatterplot(data=data_plot, x="ToTal", y="Shooting", hue="Day")        
+            fig = plt.figure()
+            sns.scatterplot(data=data_plot, x="Offense", y="No Shooting", hue="Day")        
+            st.pyplot(fig)
         else:
             st.error("Please choose at least one layer above.")
     except URLError as e:
