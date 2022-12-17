@@ -4,8 +4,7 @@ import numpy as np
 import seaborn as sns
 from datetime import datetime
 import calendar 
-import os
-from urllib.error import URLError
+
 
 sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
 st.set_page_config(page_title="Third Query", page_icon=":three:")
@@ -15,7 +14,7 @@ st.sidebar.header(":three: Third Query")
 list_Month = ['January', 'February', 'March', 'April', 'May','Jun']
 list_MonthN= [i for i in range(1,7)]
 
-DATA_CSV = os.path.abspath(os.getcwd())+"/BostonCrime2021_7000_sample.xlsx"
+DATA_CSV = "BostonCrime2021_7000_sample.xlsx"
 
 @st.experimental_memo
 def read_File(sheet="in",nrows=None):
@@ -71,36 +70,29 @@ def main():
     # count most shooting
     MOST_SHOOTING = most_Shooting(BOSTONCRIME)
     
-    try:
-        st.markdown('### The months in 2021 had most shooting offence are: **_{}_**.'.format(MOST_SHOOTING))
-        
-        # select date of month
-        st.write("#### Choose date of month")
-        select_Month = st.selectbox(
-            "Select month",
-            tuple(range(1,13))
-        )
-        
-        if select_Month:
-            Start,End = calendar.monthrange(2002, select_Month)
-            Select_Date = st.slider(
-                "Select date",
-                value=datetime(2021, select_Month, 1),
-                min_value = datetime(2021, select_Month, 1),
-                max_value = datetime(2021, select_Month, End),
-                format="MM/DD/YY")
-            if Select_Date:
-                kind_OFFENSE(BOSTONCRIME,Select_Date)
-        else:
-            st.error("Please choose at least one layer above.")
-    except URLError as e:
-        st.error(
-            """
-            **This demo requires internet access.**
-            Connection error: %s
-        """
-            % e.reason
-        )
-        
+  
+    st.markdown('### The months in 2021 had most shooting offence are: **_{}_**.'.format(MOST_SHOOTING))
+    
+    # select date of month
+    st.write("#### Choose date of month")
+    select_Month = st.selectbox(
+        "Select month",
+        tuple(range(1,13))
+    )
+    
+    if select_Month:
+        Start,End = calendar.monthrange(2002, select_Month)
+        Select_Date = st.slider(
+            "Select date",
+            value=datetime(2021, select_Month, 1),
+            min_value = datetime(2021, select_Month, 1),
+            max_value = datetime(2021, select_Month, End),
+            format="MM/DD/YY")
+        if Select_Date:
+            kind_OFFENSE(BOSTONCRIME,Select_Date)
+    else:
+        st.error("Please choose at least one layer above.")
+
+    
 if __name__ == "__main__":
     main()

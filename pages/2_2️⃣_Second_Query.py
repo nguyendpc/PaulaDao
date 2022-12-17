@@ -1,10 +1,9 @@
 import streamlit as st
 import pandas as pd
-import pydeck as pdk
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from urllib.error import URLError
+
 
 sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
 st.set_page_config(page_title="Second Query", page_icon=":two:")
@@ -62,7 +61,6 @@ def plot_LineChart(Violent,Drug):
             'Violent': Violent,
             'Drug': Drug
             })
-    st.write(data_plot)
     fig = plt.figure()
     sns.lineplot(data=data_plot,estimator=sum, ci=None,  color='lightblue')
     st.pyplot(fig)
@@ -84,55 +82,47 @@ def main():
     SHOOTING = np.array(Shooting)
     
     
-    try:
-        st.write('### The trend of offences happened during in 2021.')
-        plot_LineChart(Violent,Drug)
-        
-        st.write('### The trend of offences involving shooting happened during in 2021.')
-        plot_StackedChart(NO_SHOOTING,SHOOTING)
-        
-        # select month
-        st.write('### Scatterplot')
-        is_Month = st.selectbox(
-            "Select month",
-            tuple(range(1,7))
-        )
-        if is_Month:
-            # create dict BOSTONCRIME by month
-            p = pd.Period('2022-{}'.format(is_Month)) # khi chọn tháng = 1 nó sẽ tạo ra p='2022-1'
-            num = p.days_in_month # là số ngày của tháng đó = 31
-            idx = pd.date_range(start='2022-12', freq='D', periods=num) # tạo ra cái list 31 ngày từ '2022-12-01' ->'2022-12-31'
-            Day_Of_Month = np.array(idx.day_name()) # ngày của tháng dạng chữ tính từ ngày đầu tháng, k phải từ thứ 2
-            Date_Of_Month = [i for i in range(1,num+1)]  
-            ToTal = [0 for i in range(0,num)]
-            Shooting = [0 for i in range(0,num)]
-            for row in Date_Of_Month:
-                for b in Trend:
-                    p = pd.Period(b["OCCURRED_ON_DATE"], freq="H") # định dạng lại kiểu dữ liệu thời gian cho OCCURRED_ON_DATE
-                    d = p.day
-                    m = p.month
-                    if m == is_Month and d == row:
-                        ToTal[row-1] = ToTal[row-1] + 1
-                        Shooting[row-1] = Shooting[row-1] + b["SHOOTING"]
-            data_plot = pd.DataFrame({
-                    'Offense': ToTal,
-                    'Shooting': Shooting,
-                    'No Shooting': np.array(ToTal) - np.array(Shooting),
-                    'Day': Day_Of_Month,
-                    })
-            fig = plt.figure()
-            sns.scatterplot(data=data_plot, x="Offense", y="No Shooting", hue="Day")        
-            st.pyplot(fig)
-        else:
-            st.error("Please choose at least one layer above.")
-    except URLError as e:
-        st.error(
-            """
-            **This demo requires internet access.**
-            Connection error: %s
-        """
-            % e.reason
-        )
+    st.write('### The trend of offences happened during in 2021.')
+    plot_LineChart(Violent,Drug)
+    
+    st.write('### The trend of offences involving shooting happened during in 2021.')
+    plot_StackedChart(NO_SHOOTING,SHOOTING)
+    
+    # select month
+    st.write('### Scatterplot')
+    is_Month = st.selectbox(
+        "Select month",
+        tuple(range(1,7))
+    )
+    if is_Month:
+        # create dict BOSTONCRIME by month
+        p = pd.Period('2022-{}'.format(is_Month)) # khi chọn tháng = 1 nó sẽ tạo ra p='2022-1'
+        num = p.days_in_month # là số ngày của tháng đó = 31
+        idx = pd.date_range(start='2022-12', freq='D', periods=num) # tạo ra cái list 31 ngày từ '2022-12-01' ->'2022-12-31'
+        Day_Of_Month = np.array(idx.day_name()) # ngày của tháng dạng chữ tính từ ngày đầu tháng, k phải từ thứ 2
+        Date_Of_Month = [i for i in range(1,num+1)]  
+        ToTal = [0 for i in range(0,num)]
+        Shooting = [0 for i in range(0,num)]
+        for row in Date_Of_Month:
+            for b in Trend:
+                p = pd.Period(b["OCCURRED_ON_DATE"], freq="H") # định dạng lại kiểu dữ liệu thời gian cho OCCURRED_ON_DATE
+                d = p.day
+                m = p.month
+                if m == is_Month and d == row:
+                    ToTal[row-1] = ToTal[row-1] + 1
+                    Shooting[row-1] = Shooting[row-1] + b["SHOOTING"]
+        data_plot = pd.DataFrame({
+                'Offense': ToTal,
+                'Shooting': Shooting,
+                'No Shooting': np.array(ToTal) - np.array(Shooting),
+                'Day': Day_Of_Month,
+                })
+        fig = plt.figure()
+        sns.scatterplot(data=data_plot, x="Offense", y="No Shooting", hue="Day")        
+        st.pyplot(fig)
+    else:
+        st.error("Please choose at least one layer above.")
+
         
 if __name__ == "__main__":
     main()

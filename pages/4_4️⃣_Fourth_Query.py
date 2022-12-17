@@ -2,15 +2,14 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import seaborn as sns
-import os
-from urllib.error import URLError
+
 
 sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
 st.set_page_config(page_title="Fouth Query", page_icon=":four:")
 st.markdown("# Fouth Query")
 st.sidebar.header(":three: Fouth Query")
 
-DATA_CSV = os.path.abspath(os.getcwd())+"/BostonCrime2021_7000_sample.xlsx"
+DATA_CSV = "BostonCrime2021_7000_sample.xlsx"
 
 @st.experimental_memo
 def read_File(sheet="in",nrows=None):
@@ -85,30 +84,23 @@ def main():
     MOST_DANGEROUS = most_Dangerous(BOSTONCRIME,DISTRICT)
     
     
-    try:
-        st.markdown('### The districts had most shooting offence in 2021 are: **_{}_**.'.format(MOST_DANGEROUS))
-        
-        # create list District
-        dist = pd.DataFrame(DISTRICT)
-        dist.sort_values(by='DISTRICT_NAME', ascending=True, inplace=True)
-        is_District = st.multiselect(
-            "Select District",
-            dist["DISTRICT_NAME"].unique(),
-            dist["DISTRICT_NAME"].unique()[0]
-        )
-        
-        if is_District:
-            show_Table(BOSTONCRIME,is_District)
-        else:
-            st.error("Please choose at least one layer above.")
-    except URLError as e:
-        st.error(
-            """
-            **This demo requires internet access.**
-            Connection error: %s
-        """
-            % e.reason
-        )
+   
+    st.markdown('### The districts had most shooting offence in 2021 are: **_{}_**.'.format(MOST_DANGEROUS))
+    
+    # create list District
+    dist = pd.DataFrame(DISTRICT)
+    dist.sort_values(by='DISTRICT_NAME', ascending=True, inplace=True)
+    is_District = st.multiselect(
+        "Select District",
+        dist["DISTRICT_NAME"].unique(),
+        dist["DISTRICT_NAME"].unique()[0]
+    )
+    
+    if is_District:
+        show_Table(BOSTONCRIME,is_District)
+    else:
+        st.error("Please choose at least one layer above.")
+  
         
 if __name__ == "__main__":
     main()

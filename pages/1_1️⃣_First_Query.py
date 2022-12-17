@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
-import os
-from urllib.error import URLError
 
 
 st.set_page_config(page_title="First Query", page_icon=":one:")
@@ -10,7 +8,7 @@ st.markdown("# First Query")
 st.sidebar.header(":one: First Query")
 
 list_Day = ['Monday', 'Tuesday', 'Wednesday','Thursday','Friday','Saturday','Sunday']
-DATA_CSV = os.path.abspath(os.getcwd())+"/BostonCrime2021_7000_sample.xlsx"
+DATA_CSV ="BostonCrime2021_7000_sample.xlsx"
 
 @st.experimental_memo
 def read_File(sheet="in",nrows=None):
@@ -75,47 +73,40 @@ def main():
     DISTRICT = dict({  d["DISTRICT"]:d["DISTRICT_NAME"] for d in DISTRICT })
     BOSTONCRIME = offense_DISTRICT(BOSTONCRIME,DISTRICT)
     
-    try:
-        # create list month
-        is_Month = st.sidebar.selectbox(
-            "Select month",
-            tuple(range(1,13))
-        )
-        # create list Offense
-        is_Offense = st.sidebar.multiselect(
-            "Select Offense",
-            OFFENSE.values(),
-            OFFENSE.values()
-        )
-        
-        if is_Month and is_Offense:
-            st.write('### Information about offense in {}/2021.'.format(is_Month ))
-            OFFENSE_DISTRICT = []
-            for row in BOSTONCRIME:
-                if row["MONTH"]  == is_Month and row["OFFENSE_DESCRIPTION"] in is_Offense:
-                    row["lon"] = row["Long"]
-                    row["lat"] = row["Lat"]
-                    OFFENSE_DISTRICT.append(row)
-            # show map
-            if len(OFFENSE_DISTRICT) > 0:
-                init = OFFENSE_DISTRICT[0]
-            else:
-                init = BOSTONCRIME[0]
-            show_Map(OFFENSE_DISTRICT,init)
-            
-            st.write('### Pivot table .....')
-            pivot_Table(BOSTONCRIME)
+   
+    # create list month
+    is_Month = st.sidebar.selectbox(
+        "Select month",
+        tuple(range(1,13))
+    )
+    # create list Offense
+    is_Offense = st.sidebar.multiselect(
+        "Select Offense",
+        OFFENSE.values(),
+        OFFENSE.values()
+    )
+    
+    if is_Month and is_Offense:
+        st.write('### Information about offense in {}/2021.'.format(is_Month ))
+        OFFENSE_DISTRICT = []
+        for row in BOSTONCRIME:
+            if row["MONTH"]  == is_Month and row["OFFENSE_DESCRIPTION"] in is_Offense:
+                row["lon"] = row["Long"]
+                row["lat"] = row["Lat"]
+                OFFENSE_DISTRICT.append(row)
+        # show map
+        if len(OFFENSE_DISTRICT) > 0:
+            init = OFFENSE_DISTRICT[0]
         else:
-            st.error("Please choose at least one layer above.")
+            init = BOSTONCRIME[0]
+        show_Map(OFFENSE_DISTRICT,init)
+        
+        st.write('### Pivot table .....')
+        pivot_Table(BOSTONCRIME)
+    else:
+        st.error("Please choose at least one layer above.")
             
-    except URLError as e:
-        st.error(
-            """
-            **This project requires internet access.**
-            Connection error: %s
-        """
-            % e.reason
-        )
+  
     
 if __name__ == "__main__":
     main()
